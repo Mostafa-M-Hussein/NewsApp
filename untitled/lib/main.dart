@@ -8,6 +8,7 @@ import 'profiles/profile_5/profile_5.dart';
 import 'chat/chat1/chat_list.dart';
 import 'chat/chat2/chat_screen.dart';  //ChatScreen2(  MessageProvide.getConverasion()  , "Mostafa Mahmoud" ),
 import 'registration/registration.dart';
+import 'registration/registration1.dart';
 main() {
   runApp(MyApp());
 }
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:Registration() ,
+      home:Registration1() ,
 
     );
   }

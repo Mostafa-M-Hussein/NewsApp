@@ -44,7 +44,9 @@ class _RegistrationState extends State<Registration> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text("Welcom Back",
+
                     style: TextStyle(
+                      letterSpacing: 1.3 ,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 45)),
@@ -58,20 +60,33 @@ class _RegistrationState extends State<Registration> {
                     style: TextStyle(color: Colors.white)),
               ),
               SizedBox(
-                height: 48,
+                height: MediaQuery.of(context).size.height * 0.2  ,
               ),
               _from(context),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Dont have ab account",
+                    "Dont have an account",
                     style: TextStyle(
                       color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  FlatButton(onPressed: () {}, child: Text("Create one"))
+                  FlatButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Create one",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ))
                 ],
               ),
+              SizedBox(height: 38 ,) ,
             ],
           ),
         ),
@@ -127,6 +142,7 @@ class _RegistrationState extends State<Registration> {
                           labelStyle:
                               TextStyle(color: Colors.white, fontSize: 20),
                           focusColor: Colors.white,
+
                         ),
                       ),
                     ],
