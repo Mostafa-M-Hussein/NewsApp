@@ -6,9 +6,11 @@ import 'profiles/profile_3/profile_3.dart';
 import 'profiles/profile_4/profile_4.dart';
 import 'profiles/profile_5/profile_5.dart';
 import 'chat/chat1/chat_list.dart';
-import 'chat/chat2/chat_screen.dart';  //ChatScreen2(  MessageProvide.getConverasion()  , "Mostafa Mahmoud" ),
+import 'chat/chat2/chat_screen.dart'; //ChatScreen2(  MessageProvide.getConverasion()  , "Mostafa Mahmoud" ),
 import 'registration/registration.dart';
 import 'registration/registration1.dart';
+import 'registration/registration2.dart';
+
 main() {
   runApp(MyApp());
 }
@@ -17,10 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: ThemeData(
+        primaryColorDark: Colors.teal,
+        backgroundColor: Colors.black,
+      ),
       debugShowCheckedModeBanner: false,
-      home:Registration1() ,
-
+      home: Registration2(),
     );
   }
 }
-
