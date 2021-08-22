@@ -8,6 +8,8 @@ class InstgramFeed extends StatefulWidget {
 }
 
 class _InstgramFeedState extends State<InstgramFeed> {
+  List <int> ids = [ 0 , 2, 7 ] ;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +31,7 @@ class _InstgramFeedState extends State<InstgramFeed> {
             return Card(
                 child: Column(
                   children: [
-                    _drawHeadr(),
+                    _drawHeadr(position),
                     _drawHashtag(),
                     _drawBody(),
                     _drawFooter(),
@@ -45,7 +47,7 @@ class _InstgramFeedState extends State<InstgramFeed> {
 
 
 
-  Widget _drawHeadr() {
+  Widget _drawHeadr(int position ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -84,9 +86,24 @@ class _InstgramFeedState extends State<InstgramFeed> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                          icon: Icon(Icons.favorite),
-                          onPressed: () {},
-                          color: Colors.grey),
+                          icon: Icon(Icons.favorite ),
+                          onPressed: ()
+                          {
+                            if ( ids.contains(position) )
+                            {
+                              ids.remove(position) ;
+                            }else
+                              {
+                                ids.add(position) ;
+
+                              }
+                            setState(() {
+
+                            });
+                            print ( ids ) ;
+
+                          },
+                          color: ids.contains(position) ? Colors.red  : Colors.grey),
                       Transform.translate(
                           offset: Offset(-9, 0),
                           child:

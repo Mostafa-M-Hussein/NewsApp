@@ -1,8 +1,11 @@
+import 'dart:math';
+import 'package:news_app/screens/single_post.dart' ;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/api/posts_api.dart';
 import 'package:news_app/models/post.dart';
 import 'dart:async';
+import 'package:news_app/utlities/data_utilites.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class WhatsNew extends StatefulWidget {
@@ -15,8 +18,6 @@ class _WhatsNewState extends State<WhatsNew> {
 
   @override
   Widget build(BuildContext context) {
-    posts.fetchWhatsNew();
-
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,30 +37,74 @@ class _WhatsNewState extends State<WhatsNew> {
       fontSize: 18,
     );
 
-    return (Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width * 0.50,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: ExactAssetImage("assets/images/1.jpg"),
-              fit: BoxFit.cover)),
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Be yourself; everyone else is already taken",
-            style: _headertitle,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-              "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe ― Albert Einstein",
-              textAlign: TextAlign.center,
-              style: _headrDescription),
-        ],
-      )),
-    ));
+    return FutureBuilder(
+        future: posts.fetchPostsByCatergoryID("2"),
+        builder: (context, AsyncSnapshot snapShot) {
+          switch (snapShot.connectionState) {
+            case ConnectionState.waiting:
+              return loading();
+              break;
+
+            case ConnectionState.active:
+              return loading();
+              break;
+            case ConnectionState.done:
+              if (snapShot.error != null) {
+                return error(snapShot.error);
+              } else {
+                if (snapShot.hasData) {
+                  List<Post> len = snapShot.data;
+                  if (len.length > 3) {
+                    Random random = Random();
+                    int randomIndex = random.nextInt(len.length);
+                    Post post = snapShot.data[randomIndex];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(context  , MaterialPageRoute(builder:(context)
+                        {
+                            return SinglePost( post ) ;
+                        } ) )   ;
+
+                      }  ,
+                      child: (Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width * 0.50,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(post.featured_image),
+                                fit: BoxFit.cover)),
+                        child: Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              post.title,
+                              style: _headertitle,
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8),
+                            Text(post.content,
+                                textAlign: TextAlign.center,
+                                style: _headrDescription),
+                          ],
+                        )),
+                      )),
+                    );
+                  } else {
+                    return noData();
+                  }
+                } else {
+                  return noData();
+                }
+              }
+
+              break;
+            case ConnectionState.none:
+              return connectionError();
+
+              break;
+          }
+        });
   }
 
   Widget drawTopStories() {
@@ -76,18 +121,19 @@ class _WhatsNewState extends State<WhatsNew> {
               padding: EdgeInsets.all(12),
               child: Card(
                 child: FutureBuilder(
-                  future: posts.fetchWhatsNew(),
+                  future: posts.fetchPostsByCatergoryID("2"),
                   builder: (context, AsyncSnapshot snapShot) {
                     switch (snapShot.connectionState) {
                       case ConnectionState.waiting:
-                        return _loading();
+                        return loading();
                         break;
 
                       case ConnectionState.active:
-                        return _loading();
+                        return loading();
                         break;
                       case ConnectionState.done:
                         if (snapShot.error != null) {
+                          return error(snapShot.error);
                         } else {
                           if (snapShot.hasData) {
                             List<Post> len = snapShot.data;
@@ -104,12 +150,18 @@ class _WhatsNewState extends State<WhatsNew> {
                                   _drawSingelRow(post3),
                                 ],
                               ));
+                            } else {
+                              return noData();
                             }
-                          } else {}
+                          } else {
+                            return noData();
+                          }
                         }
 
                         break;
                       case ConnectionState.none:
+                        return connectionError();
+
                         break;
                     }
                   },
@@ -123,71 +175,111 @@ class _WhatsNewState extends State<WhatsNew> {
   Widget drawRecenctUpdate() {
     return (Padding(
       padding: EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _drawtext("Recent Updates"),
-          _drwaRecentlyUpdateCard(),
-          _drwaRecentlyUpdateCard(),
-          SizedBox(
-            height: 25,
-            width: 100,
-          )
-        ],
+      child: FutureBuilder(
+        future: posts.fetchPostsByCatergoryID("1"),
+        builder: (context, AsyncSnapshot snapShot) {
+          switch (snapShot.connectionState) {
+            case ConnectionState.waiting:
+              return loading();
+              break;
+
+            case ConnectionState.active:
+              return loading();
+              break;
+            case ConnectionState.done:
+              if (snapShot.error != null) {
+                return error(snapShot.error);
+              } else {
+                if (snapShot.hasData) {
+                  List<Post> len = snapShot.data;
+                  if (len.length > 3) {
+                    Post post1 = snapShot.data[2];
+                    Post post2 = snapShot.data[3];
+                    return (Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _drawtext("Recent Updates"),
+                        _drwaRecentlyUpdateCard(post1),
+                        _drwaRecentlyUpdateCard(post2),
+                        SizedBox(
+                          height: 25,
+                          width: 100,
+                        )
+                      ],
+                    ));
+                  } else {
+                    return noData();
+                  }
+                } else {
+                  return noData();
+                }
+              }
+
+              break;
+            case ConnectionState.none:
+              return connectionError();
+
+              break;
+          }
+        },
       ),
     ));
   }
 
   Widget _drawSingelRow(Post post) {
-    return (Padding(
-        padding: EdgeInsets.all(10),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.network(
-                post.featured_image,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      post.title,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 3,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.timer),
-                        Text(dateWritten(post.dateWritten)),
-                      ]),
-                ],
-              ),
-            ),
-          ],
-        )));
-  }
+    return GestureDetector(
+      onTap:()
+      {
+        Navigator.push( context , MaterialPageRoute(builder: (context)
+        {
+          return SinglePost(post) ;
+        })) ;
+      } ,
 
-  String dateWritten(String dateTime) {
-    Duration _timeAgo = DateTime.now().difference(DateTime.parse(dateTime));
-    DateTime theDifference = DateTime.now().subtract(_timeAgo);
-    return timeago.format(theDifference);
+      child: (Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.network(
+                  post.featured_image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        post.title,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 3,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.timer),
+                          Text(dateWritten(post.dateWritten)),
+                        ]),
+                  ],
+                ),
+              ),
+            ],
+          ))),
+    );
   }
 
   Widget _drwaDivider() {
@@ -207,73 +299,63 @@ class _WhatsNewState extends State<WhatsNew> {
         ));
   }
 
-  Widget _drwaRecentlyUpdateCard() {
+  Widget _drwaRecentlyUpdateCard(Post post) {
     return Card(
-        child: Column(
+        child: GestureDetector(
+          onTap:  (){
+            Navigator.push(context ,   MaterialPageRoute(builder:  (context)
+            {
+              return SinglePost(post) ;
+            } )) ;
+          } ,
+          child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: ExactAssetImage("assets/images/2.jpg"),
-                  fit: BoxFit.cover)),
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.25,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0, bottom: 8, left: 16),
-          child: Container(
-              padding: EdgeInsets.only(left: 10, right: 15, top: 5, bottom: 4),
-              decoration: BoxDecoration(
-                  color: Colors.deepOrange,
-                  borderRadius: BorderRadius.circular(8)),
+          Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: NetworkImage(post.featured_image.toString()),
+                    fit: BoxFit.cover)),
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.25,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 8, left: 16),
+            child: Container(
+                padding: EdgeInsets.only(left: 10, right: 15, top: 5, bottom: 4),
+                decoration: BoxDecoration(
+                    color: Colors.deepOrange,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  "Sport",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )),
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
               child: Text(
-                "Sport",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+                post.title,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               )),
-        ),
-        Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-            child: Text(
-              "Veetel is Ferrai Number ONe _ Moado ",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            )),
-        Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-            child: Row(
-              children: [
-                Icon(Icons.timer, color: Colors.grey),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  "15 min ",
-                  style: TextStyle(color: Colors.grey, fontSize: 18),
-                ),
-              ],
-            ))
+          Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.timer, color: Colors.grey),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    dateWritten(post.dateWritten),
+                    style: TextStyle(color: Colors.grey, fontSize: 18),
+                  ),
+                ],
+              ))
       ],
-    ));
-  }
-
-  Widget _loading() {
-    return Container();
-  }
-
-  Widget _noData() {
-    return Container(
-      padding: EdgeInsets.all(15),
-      child: Text("No Data Available ! "),
-    );
-  }
-
-  Widget _error(var error ) {
-    return Container(
-      padding: EdgeInsets.all(15),
-      child: Text(error),
-    );
+    ),
+        ));
   }
 }
