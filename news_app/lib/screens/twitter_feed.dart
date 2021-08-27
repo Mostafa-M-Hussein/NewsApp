@@ -29,7 +29,6 @@ class _TwitterFeedState extends State<TwitterFeed> {
               children:
               [
                 _cardHeader() ,
-
                 _cardBody() ,
                 _drawLine() ,
                 _cardFooter()
@@ -59,10 +58,10 @@ Widget _cardHeader ()
       Column(  crossAxisAlignment: CrossAxisAlignment.start , children:
 
       [
-        Row ( children: [
-          Text('Christina Meyers @ch_meyers',  style: TextStyle( color : Colors.black, fontWeight: FontWeight.w900 , fontSize: 16),)  ,
-          SizedBox(width: 8,) ,
-          Text ("@ch_meyers" , style: TextStyle( color : Colors.black, fontWeight: FontWeight.w600 )  )  ,
+        Row (
+            children: [
+          Text('Christina Meyers ',  style: TextStyle( color : Colors.black, fontWeight: FontWeight.w900 , fontSize: 16),)  ,
+          Text ("@ch_meyers" , style: TextStyle(color : Colors.black, fontWeight: FontWeight.w600  )  )  ,
 
         ]   ),
         SizedBox(height: 8,),

@@ -10,8 +10,6 @@ class FacebookFeeds extends StatefulWidget {
 }
 
 class _FacebookFeedsState extends State<FacebookFeeds> {
-
-
   List<int> ids = [];
 
   TextStyle _hashTagStyle = TextStyle(color: Colors.orange);
@@ -22,10 +20,9 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
     ids = [0, 2, 5];
   }
 
-  PostsApi post = PostsApi();
-
   @override
   Widget build(BuildContext context) {
+    PostsApi post = PostsApi();
     return Scaffold(
       appBar: AppBar(
         title: Text("Facebook Feeds"),
@@ -37,55 +34,54 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
       drawer: NavigationDrawer(),
       body: FutureBuilder(
         future: post.fetchPostsByCatergoryID('1'),
-        builder:  (context  , AsyncSnapshot snapshot)
-        {
-          List<Post> posts = snapshot.data ;
-          Post post1  = posts[0] ;
-          switch (snapshot.connectionState)
-          {
-            case ConnectionState.waiting :
-              return loading () ;
-                break ;
-            case ConnectionState.active :
-              break ;
-            case ConnectionState.none :
-              return noData() ;
-
+        builder: (context, AsyncSnapshot snapshot) {
+          List<Post> posts = snapshot.data;
+          Post post1 = posts[0];
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return loading();
               break;
-
-            case ConnectionState.done :
-              return ( ListView.builder(
-                padding: EdgeInsets.all(8),
-                itemBuilder: (context, position) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _drawHeader(post1 , position),
-                          _drawTitle(),
-                          _drawHashTags(),
-                          _drawBody(post1),
-                          _drawFooter(),
-                        ],
+            case ConnectionState.active:
+              return loading();
+              break;
+            case ConnectionState.none:
+              return connectionError();
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return snapshot.error;
+              } else {
+                return (ListView.builder(
+                  padding: EdgeInsets.all(8),
+                  itemBuilder: (context, position) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            _drawHeader(post1, position),
+                            _drawTitle(),
+                            _drawHashTags(),
+                            _drawBody(post1),
+                            _drawFooter(),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-                itemCount: posts.length,
-              )) ;
-
+                    );
+                  },
+                  itemCount: posts.length ,
+                ));
+              }
               break ;
 
           }
-        } ,
-
+        },
       ),
     );
   }
 
-  Widget _drawHeader(Post posts , int position) {
+  Widget _drawHeader(Post posts, int position) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -122,8 +118,7 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
               ],
             ),
           ],
-        ) ,
-
+        ),
         Row(
           children: <Widget>[
             IconButton(
@@ -138,7 +133,7 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
                 });
               },
               color:
-              (ids.contains(position)) ? Colors.red : Colors.grey.shade400,
+                  (ids.contains(position)) ? Colors.red : Colors.grey.shade400,
             ),
             Transform.translate(
                 offset: Offset(-12, 0),
@@ -148,8 +143,7 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
                 )),
           ],
         ),
-      ]
-      ,
+      ],
     );
   }
 
@@ -193,12 +187,9 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
   Widget _drawBody(Post posts) {
     return SizedBox(
         width: double.infinity,
-        height: MediaQuery
-            .of(context)
-            .size
-            .height * 0.25,
+        height: MediaQuery.of(context).size.height * 0.25,
         child: Image(
-          image: NetworkImage(posts.featured_image) ,
+          image: NetworkImage(posts.featured_image),
           fit: BoxFit.cover,
         ));
   }
@@ -210,7 +201,6 @@ class _FacebookFeedsState extends State<FacebookFeeds> {
         FlatButton(
             onPressed: () {},
             child: Text(
-
               '10 COMMENTS',
               style: _hashTagStyle,
             )),

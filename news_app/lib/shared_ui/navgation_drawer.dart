@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/models/nav_menu.dart';
@@ -11,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:news_app/utlities/api_utilites.dart';
 import 'package:news_app/screens/pages/login.dart';
 
+
 class NavigationDrawer extends StatefulWidget {
   @override
   _NavigationDrawerState createState() => _NavigationDrawerState();
@@ -19,9 +19,42 @@ class NavigationDrawer extends StatefulWidget {
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
   bool isLoggedIn = false     ;
+  String token  ;
+  SharedPreferences sharedPreferences ;
 
+  _checkToken() async
+  {
+    sharedPreferences = await  SharedPreferences.getInstance() ;
+
+    setState(()  {
+
+      token  = sharedPreferences.get('token') ;
+
+      if ( token == null )
+      {
+        isLoggedIn = true  ;
+      }else
+      {
+        isLoggedIn= false  ;
+      }
+    });
+
+  }
+   _logout ()
+  {
+      if ( sharedPreferences != null ) {
+        sharedPreferences.remove('token');
+
+        return HomeScreen();
+      }
+
+  }
   @override
   Widget build(BuildContext context) {
+
+    if ( this.mounted ) {
+      _checkToken();
+    }
     List<NavMenuItem> navMenu = [
       NavMenuItem("Explore", () => HomeScreen()),
       NavMenuItem("HeadLines news ", () => HeadLineNews()),
@@ -32,7 +65,18 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
 
 
 
-    navMenu.add( NavMenuItem( "Login", ()=> Login()) ) ;
+    @override
+     initState()
+    {
+      super.initState() ;
+      if ( isLoggedIn  )
+      {
+        navMenu.add( NavMenuItem( "Log out ", ()=> Login()) ) ;
+      } else
+      {
+        navMenu.add( NavMenuItem( "Login", ()=> Login()) ) ;
+      }
+    }
 
 
     return Drawer(

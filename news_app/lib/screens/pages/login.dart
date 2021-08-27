@@ -115,7 +115,7 @@ class _LoginState extends State<Login> {
                   if (_formKey.currentState.validate()) {
                     // TODO : Call Api for Login
                     setState(() {
-                      isLoading = true;
+                      isLoading = false ;
                     });
                     username = _usernameController.text ;
                     password = _passwordController.text ;
@@ -153,7 +153,6 @@ class _LoginState extends State<Login> {
   }
 
   Widget _drawLoding() {
-
       return Container(
         child: Center(
           child: CircularProgressIndicator(),
